@@ -423,36 +423,37 @@ input.kid-check:disabled{
   .chip{ padding: 6px 8px; }
 }
 /* =========================
-   TH "Nouveau" : texte puis icône EN DESSOUS (robuste)
+   TH "Nouveau" COMPACT
    ========================= */
+
 th.th-nouveau{
-  text-align: center;              /* centre le contenu */
+  text-align: center;
   vertical-align: middle;
-  padding-top: 6px;                /* compact et propre */
-  padding-bottom: 6px;
+  padding: 4px 4px !important;
+  height: 50px;              /* hauteur fixe raisonnable */
 }
 
-/* pile verticale */
 .th-nouveau__stack{
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 4px;
-  line-height: 1.05;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1;
 }
 
-/* texte */
+/* texte plus compact */
 .th-nouveau__text{
-  display: block;
+  font-size: 10px;
+  font-weight: 900;
 }
 
-/* icône */
+/* logo petit et contrôlé */
 .th-nouveau__icon{
-  display: block !important;       /* force en dessous */
-  width: 30px;
-  height: 30px;
+  width: 18px;               /* réduit fortement */
+  height: 18px;
   object-fit: contain;
+  display: block;
 }
 
 /* mobile : icône plus petite, toujours sous le texte */
@@ -462,4 +463,5 @@ th.th-nouveau{
     height: 20px;
   }
 }
+
 
