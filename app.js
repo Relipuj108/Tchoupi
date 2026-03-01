@@ -1,103 +1,97 @@
 const tbody = document.getElementById("tbody");
 const statusEl = document.getElementById("status");
 
+const STORAGE_KEY = "checklist-state";
+
+/* ---------------------------
+   UTILITAIRES
+--------------------------- */
+
 function setStatus(msg, isError = false) {
   statusEl.textContent = msg;
   statusEl.style.color = isError ? "crimson" : "inherit";
 }
 
-function loadLocalState() {
+function loadState() {
   try {
-    const raw = localStorage.getItem("choices");
-    const parsed = raw ? JSON.parse(raw) : {};
-    // Normalisation minimale
-    for (const k of Object.keys(parsed)) {
-      parsed[k] = {
-        A: !!parsed[k]?.A,
-        B: !!parsed[k]?.B
-      };
-    }
-    return parsed;
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
   } catch {
     return {};
   }
 }
 
-function saveLocalState(state) {
-  localStorage.setItem("choices", JSON.stringify(state));
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function makeCheckbox(id, col, checked, onChange) {
-  const label = document.createElement("label");
-  label.style.display = "inline-flex";
-  label.style.alignItems = "center";
-  label.style.gap = "8px";
+/* ---------------------------
+   RENDU
+--------------------------- */
 
+function createCheckbox(id, column, state) {
   const input = document.createElement("input");
   input.type = "checkbox";
-  input.checked = checked;
-  input.setAttribute("data-id", id);
-  input.setAttribute("data-col", col);
-  input.addEventListener("change", onChange);
+  input.checked = !!state[id]?.[column];
 
-  const txt = document.createElement("span");
-  txt.textContent = col;
+  input.addEventListener("change", () => {
+    if (!state[id]) state[id] = { A: false, B: false };
 
-  label.appendChild(input);
-  label.appendChild(txt);
-  return label;
+    // Mise à jour indépendante
+    state[id][column] = input.checked;
+
+    saveState(state);
+    setStatus("Enregistré ✅");
+  });
+
+  return input;
 }
 
-async function main() {
+async function init() {
   try {
-    setStatus("Chargement…");
+    setStatus("Chargement...");
 
     const res = await fetch("data.json", { cache: "no-store" });
     const rows = await res.json();
 
-    const state = loadLocalState();
+    if (!Array.isArray(rows)) {
+      throw new Error("data.json doit être un tableau []");
+    }
+
+    const state = loadState();
 
     tbody.innerHTML = "";
 
-    for (const r of rows) {
-      // init si absent
-      if (!state[r.id]) state[r.id] = { A: false, B: false };
+    const fragment = document.createDocumentFragment();
 
+    for (const row of rows) {
       const tr = document.createElement("tr");
 
+      // Colonne texte
       const tdLabel = document.createElement("td");
-      tdLabel.textContent = r.label;
+      tdLabel.textContent = row.label;
       tr.appendChild(tdLabel);
 
+      // Colonne A
       const tdA = document.createElement("td");
-      const tdB = document.createElement("td");
-
-      tdA.appendChild(
-        makeCheckbox(r.id, "A", state[r.id].A, (e) => {
-          state[r.id].A = e.target.checked;
-          saveLocalState(state);
-          setStatus("Enregistré (local) ✅");
-        })
-      );
-
-      tdB.appendChild(
-        makeCheckbox(r.id, "B", state[r.id].B, (e) => {
-          state[r.id].B = e.target.checked;
-          saveLocalState(state);
-          setStatus("Enregistré (local) ✅");
-        })
-      );
-
+      tdA.style.textAlign = "center";
+      tdA.appendChild(createCheckbox(row.id, "A", state));
       tr.appendChild(tdA);
+
+      // Colonne B
+      const tdB = document.createElement("td");
+      tdB.style.textAlign = "center";
+      tdB.appendChild(createCheckbox(row.id, "B", state));
       tr.appendChild(tdB);
 
-      tbody.appendChild(tr);
+      fragment.appendChild(tr);
     }
 
-    setStatus("Prêt (sauvegarde locale).");
+    tbody.appendChild(fragment);
+
+    setStatus("Prêt.");
   } catch (err) {
     setStatus(`Erreur: ${err.message}`, true);
   }
 }
 
-main();
+init();
