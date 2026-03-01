@@ -422,28 +422,23 @@ input.kid-check:disabled{
   .tchoupi-icon{ height: 48px; width: 34px; }
   .chip{ padding: 6px 8px; }
 }
-/* =========================
-   HEADER ICON UNDER TEXT
-   ========================= */
+/* Force l'icône sous le texte */
+.th-with-icon { text-align: center; }
 
-.th-with-icon .th-stack{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.th-icon{
+.th-with-icon .th-icon{
+  display: block;        /* <-- clé */
+  margin: 4px auto 0;    /* centrée + espace au-dessus */
   width: 30px;
   height: 30px;
   object-fit: contain;
 }
 
-/* mobile : plus petite pour rester dans 40px */
+/* mobile plus petit */
 @media (max-width: 600px){
-  .th-icon{
+  .th-with-icon .th-icon{
     width: 20px;
     height: 20px;
+    margin-top: 3px;
   }
 }
+.th-with-icon .th-label{ display:block !important; }
