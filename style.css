@@ -1,0 +1,8 @@
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+main { max-width: 980px; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 10px; }
+th { text-align: left; background: #f6f6f6; }
+#status { margin: 12px 0; font-size: 14px; }
+.muted { opacity: .8; }
+label { cursor: pointer; }
