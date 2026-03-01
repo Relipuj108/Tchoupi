@@ -422,3 +422,28 @@ input.kid-check:disabled{
   .tchoupi-icon{ height: 48px; width: 34px; }
   .chip{ padding: 6px 8px; }
 }
+/* =========================
+   ICON IN TABLE HEADER
+   ========================= */
+
+.th-with-icon .th-label{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.th-icon{
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+/* version mobile légèrement plus petite */
+@media (max-width: 600px){
+  .th-icon{
+    width: 22px;
+    height: 22px;
+  }
+}
