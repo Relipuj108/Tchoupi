@@ -1,93 +1,151 @@
+// ====== CONFIG ======
+const API_URL = "COLLE_ICI_TON_URL_APPS_SCRIPT"; // ex: https://script.google.com/macros/s/XXXX/exec
+const PW_SESSION_KEY = "gs-write-password";
+
+// ====== DOM ======
 const tbody = document.getElementById("tbody");
 const statusEl = document.getElementById("status");
 
-const STORAGE_KEY = "checklist-state";
-
-/* ---------------------------
-   UTILITAIRES
---------------------------- */
-
+// ====== UI ======
 function setStatus(msg, isError = false) {
+  if (!statusEl) return;
   statusEl.textContent = msg;
   statusEl.style.color = isError ? "crimson" : "inherit";
 }
 
-function loadState() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  } catch {
-    return {};
+// ====== PASSWORD (session) ======
+function getPassword() {
+  return sessionStorage.getItem(PW_SESSION_KEY) || "";
+}
+function setPassword(pw) {
+  sessionStorage.setItem(PW_SESSION_KEY, pw);
+}
+function clearPassword() {
+  sessionStorage.removeItem(PW_SESSION_KEY);
+}
+function ensurePassword() {
+  let pw = getPassword();
+  if (!pw) {
+    pw = prompt("Mot de passe pour enregistrer :") || "";
+    if (!pw) throw new Error("Mot de passe requis");
+    setPassword(pw);
   }
+  return pw;
 }
 
-function saveState(state) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+// ====== API ======
+async function apiReadState() {
+  const res = await fetch(`${API_URL}?action=read`, { cache: "no-store" });
+  const json = await res.json().catch(() => null);
+  if (!json || !json.ok) throw new Error(json?.error || "Lecture impossible");
+  return json.data || {}; // { "row-001": {A:true,B:false}, ... }
 }
 
-/* ---------------------------
-   RENDU
---------------------------- */
+async function apiWriteCell({ id, column, value }) {
+  const password = ensurePassword();
 
-function createCheckbox(id, column, state) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "write",
+      id,
+      column,     // "A" | "B"
+      value,      // boolean
+      password
+    })
+  });
+
+  const json = await res.json().catch(() => null);
+
+  if (!json || !json.ok) {
+    // si mauvais mdp, on le purge pour forcer une nouvelle saisie
+    const err = (json?.error || "Écriture impossible").toString();
+    if (err.toLowerCase().includes("unauthorized")) clearPassword();
+    throw new Error(err);
+  }
+
+  return true;
+}
+
+// ====== CHECKBOX FACTORY ======
+function createCheckbox({ id, column, checked }) {
   const input = document.createElement("input");
   input.type = "checkbox";
-  input.checked = !!state[id]?.[column];
+  input.checked = !!checked;
+  input.setAttribute("aria-label", `${id}-${column}`);
 
-  input.addEventListener("change", () => {
-    if (!state[id]) state[id] = { A: false, B: false };
+  input.addEventListener("change", async () => {
+    const newValue = input.checked;       // valeur voulue
+    const previousValue = !newValue;      // pour rollback si erreur
 
-    // Mise à jour indépendante
-    state[id][column] = input.checked;
-
-    saveState(state);
-    setStatus("Enregistré ✅");
+    try {
+      setStatus("Sauvegarde…");
+      await apiWriteCell({ id, column, value: newValue });
+      setStatus("Enregistré ✅");
+    } catch (err) {
+      // rollback visuel
+      input.checked = previousValue;
+      setStatus(`Erreur: ${err.message}`, true);
+    }
   });
 
   return input;
 }
 
+// ====== BOOTSTRAP ======
 async function init() {
   try {
-    setStatus("Chargement...");
+    setStatus("Chargement…");
 
-    const res = await fetch("data.json", { cache: "no-store" });
-    const rows = await res.json();
+    // 1) Liste statique des lignes
+    const listRes = await fetch("data.json", { cache: "no-store" });
+    const rows = await listRes.json();
 
     if (!Array.isArray(rows)) {
-      throw new Error("data.json doit être un tableau []");
+      throw new Error("data.json doit être un tableau JSON []");
     }
 
-    const state = loadState();
+    // 2) État depuis Google Sheets
+    const state = await apiReadState();
 
+    // 3) Render
     tbody.innerHTML = "";
-
     const fragment = document.createDocumentFragment();
 
     for (const row of rows) {
       const tr = document.createElement("tr");
 
-      // Colonne texte
       const tdLabel = document.createElement("td");
-      tdLabel.textContent = row.label;
+      tdLabel.textContent = row.label || row.id;
       tr.appendChild(tdLabel);
 
-      // Colonne A
       const tdA = document.createElement("td");
       tdA.style.textAlign = "center";
-      tdA.appendChild(createCheckbox(row.id, "A", state));
+      tdA.appendChild(
+        createCheckbox({
+          id: row.id,
+          column: "A",
+          checked: state[row.id]?.A
+        })
+      );
       tr.appendChild(tdA);
 
-      // Colonne B
       const tdB = document.createElement("td");
       tdB.style.textAlign = "center";
-      tdB.appendChild(createCheckbox(row.id, "B", state));
+      tdB.appendChild(
+        createCheckbox({
+          id: row.id,
+          column: "B",
+          checked: state[row.id]?.B
+        })
+      );
       tr.appendChild(tdB);
 
       fragment.appendChild(tr);
     }
 
     tbody.appendChild(fragment);
-
     setStatus("Prêt.");
   } catch (err) {
     setStatus(`Erreur: ${err.message}`, true);
