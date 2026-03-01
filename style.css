@@ -422,23 +422,44 @@ input.kid-check:disabled{
   .tchoupi-icon{ height: 48px; width: 34px; }
   .chip{ padding: 6px 8px; }
 }
-/* Force l'icône sous le texte */
-.th-with-icon { text-align: center; }
+/* =========================
+   TH "Nouveau" : texte puis icône EN DESSOUS (robuste)
+   ========================= */
+th.th-nouveau{
+  text-align: center;              /* centre le contenu */
+  vertical-align: middle;
+  padding-top: 6px;                /* compact et propre */
+  padding-bottom: 6px;
+}
 
-.th-with-icon .th-icon{
-  display: block;        /* <-- clé */
-  margin: 4px auto 0;    /* centrée + espace au-dessus */
+/* pile verticale */
+.th-nouveau__stack{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px;
+  line-height: 1.05;
+}
+
+/* texte */
+.th-nouveau__text{
+  display: block;
+}
+
+/* icône */
+.th-nouveau__icon{
+  display: block !important;       /* force en dessous */
   width: 30px;
   height: 30px;
   object-fit: contain;
 }
 
-/* mobile plus petit */
+/* mobile : icône plus petite, toujours sous le texte */
 @media (max-width: 600px){
-  .th-with-icon .th-icon{
+  .th-nouveau__icon{
     width: 20px;
     height: 20px;
-    margin-top: 3px;
   }
 }
-.th-with-icon .th-label{ display:block !important; }
+
