@@ -8,7 +8,16 @@ function setStatus(msg, isError = false) {
 
 function loadLocalState() {
   try {
-    return JSON.parse(localStorage.getItem("choices") || "{}");
+    const raw = localStorage.getItem("choices");
+    const parsed = raw ? JSON.parse(raw) : {};
+    // Normalisation minimale
+    for (const k of Object.keys(parsed)) {
+      parsed[k] = {
+        A: !!parsed[k]?.A,
+        B: !!parsed[k]?.B
+      };
+    }
+    return parsed;
   } catch {
     return {};
   }
@@ -18,21 +27,21 @@ function saveLocalState(state) {
   localStorage.setItem("choices", JSON.stringify(state));
 }
 
-function makeRadio(id, name, value, checked, onChange) {
+function makeCheckbox(id, col, checked, onChange) {
   const label = document.createElement("label");
   label.style.display = "inline-flex";
   label.style.alignItems = "center";
   label.style.gap = "8px";
 
   const input = document.createElement("input");
-  input.type = "radio";
-  input.name = name;
-  input.value = value;
+  input.type = "checkbox";
   input.checked = checked;
+  input.setAttribute("data-id", id);
+  input.setAttribute("data-col", col);
   input.addEventListener("change", onChange);
 
   const txt = document.createElement("span");
-  txt.textContent = value;
+  txt.textContent = col;
 
   label.appendChild(input);
   label.appendChild(txt);
@@ -42,13 +51,18 @@ function makeRadio(id, name, value, checked, onChange) {
 async function main() {
   try {
     setStatus("Chargement…");
+
     const res = await fetch("data.json", { cache: "no-store" });
     const rows = await res.json();
 
     const state = loadLocalState();
 
     tbody.innerHTML = "";
+
     for (const r of rows) {
+      // init si absent
+      if (!state[r.id]) state[r.id] = { A: false, B: false };
+
       const tr = document.createElement("tr");
 
       const tdLabel = document.createElement("td");
@@ -58,20 +72,21 @@ async function main() {
       const tdA = document.createElement("td");
       const tdB = document.createElement("td");
 
-      const name = `choice-${r.id}`;
-      const saved = state[r.id] || "";
+      tdA.appendChild(
+        makeCheckbox(r.id, "A", state[r.id].A, (e) => {
+          state[r.id].A = e.target.checked;
+          saveLocalState(state);
+          setStatus("Enregistré (local) ✅");
+        })
+      );
 
-      tdA.appendChild(makeRadio(r.id, name, "A", saved === "A", () => {
-        state[r.id] = "A";
-        saveLocalState(state);
-        setStatus("Enregistré (local) ✅");
-      }));
-
-      tdB.appendChild(makeRadio(r.id, name, "B", saved === "B", () => {
-        state[r.id] = "B";
-        saveLocalState(state);
-        setStatus("Enregistré (local) ✅");
-      }));
+      tdB.appendChild(
+        makeCheckbox(r.id, "B", state[r.id].B, (e) => {
+          state[r.id].B = e.target.checked;
+          saveLocalState(state);
+          setStatus("Enregistré (local) ✅");
+        })
+      );
 
       tr.appendChild(tdA);
       tr.appendChild(tdB);
