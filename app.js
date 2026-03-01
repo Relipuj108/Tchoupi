@@ -16,7 +16,7 @@ const statusEl = document.getElementById("status");
 const passwordInput = document.getElementById("passwordInput");
 const unlockBtn = document.getElementById("unlockBtn");
 const authStatus = document.getElementById("authStatus");
-const modeChip = document.getElementById("modeChip"); // badge Lecture / Écriture
+const modeChip = document.getElementById("modeChip");
 
 // ======================
 // STATE
@@ -28,7 +28,6 @@ let currentPassword = "";
 // UI
 // ======================
 function setStatus(msg, isError = false) {
-  if (!statusEl) return;
   statusEl.textContent = msg;
   statusEl.style.color = isError ? "crimson" : "inherit";
 }
@@ -55,15 +54,11 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  currentPassword = pw;
+  currentPassword = pw;     // envoyé au backend (backend case-insensitive)
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
-
-  // ⭐ Badge dynamique
-  if (modeChip) {
-    modeChip.textContent = "Écriture";
-  }
+  if (modeChip) modeChip.textContent = "Écriture";
 
   updateCheckboxState();
 });
@@ -116,10 +111,7 @@ async function apiWriteCell({ id, column, value }) {
   u.searchParams.set("password", currentPassword);
 
   const json = await fetchJson(u.toString());
-
-  if (!json.ok) {
-    throw new Error(json.error || "Erreur write");
-  }
+  if (!json.ok) throw new Error(json.error || "Erreur write");
 
   return true;
 }
@@ -130,10 +122,7 @@ async function apiWriteCell({ id, column, value }) {
 function createCheckbox({ id, column, checked }) {
   const input = document.createElement("input");
   input.type = "checkbox";
-
-  // ⭐ Style enfants
   input.className = "kid-check";
-
   input.checked = !!checked;
   input.disabled = !isWriteEnabled;
 
@@ -157,11 +146,9 @@ function createCheckbox({ id, column, checked }) {
 }
 
 // ======================
-// RENDER TABLE PRINCIPAL
+// RENDER PRINCIPAL (A + B)
 // ======================
 function renderTableMain({ tbody, rows, state }) {
-  if (!tbody) return;
-
   tbody.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
@@ -197,11 +184,9 @@ function renderTableMain({ tbody, rows, state }) {
 }
 
 // ======================
-// RENDER TABLE DEUX-VOIX
+// RENDER DEUX-VOIX (A only)
 // ======================
 function renderTableDv({ tbody, rows, state }) {
-  if (!tbody) return;
-
   tbody.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
@@ -215,8 +200,8 @@ function renderTableDv({ tbody, rows, state }) {
     const tdOne = document.createElement("td");
     tdOne.className = "center";
     tdOne.appendChild(createCheckbox({
-      id: row.id,
-      column: "A", // une seule colonne utilisée
+      id: row.id,       // dv-row-xxx
+      column: "A",      // ✅ une seule colonne
       checked: state[row.id]?.A
     }));
     tr.appendChild(tdOne);
@@ -234,6 +219,8 @@ async function init() {
   try {
     setStatus("Chargement…");
 
+    if (modeChip) modeChip.textContent = "Lecture";
+
     const [mainRes, dvRes] = await Promise.all([
       fetch(MAIN_JSON, { cache: "no-store" }),
       fetch(DV_JSON, { cache: "no-store" })
@@ -250,12 +237,6 @@ async function init() {
     renderTableDv({ tbody: tbodyDv, rows: dvRows, state });
 
     updateCheckboxState();
-
-    // Badge initial
-    if (modeChip) {
-      modeChip.textContent = "Lecture";
-    }
-
     setStatus("Prêt.");
   } catch (err) {
     setStatus("Erreur : " + err.message, true);
