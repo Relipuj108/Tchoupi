@@ -430,3 +430,50 @@ input.kid-check:disabled{
   }
 }
 
+/* =========================
+   MOBILE FORCED WIDTH
+   ========================= */
+@media (max-width: 600px){
+
+  table{
+    table-layout: fixed;   /* OBLIGATOIRE pour forcer largeur */
+    width: 100%;
+  }
+
+  /* Colonne titre */
+  thead th:first-child,
+  tbody td:first-child{
+    width: 150px;
+    max-width: 150px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  /* Colonnes checkbox */
+  .th-center,
+  td.center{
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    padding: 4px 2px;   /* réduire espace */
+  }
+
+  /* réduire padding général */
+  thead th,
+  tbody td{
+    padding: 6px 4px;
+  }
+
+  /* checkbox un peu plus petite */
+  input.kid-check{
+    width: 28px;
+    height: 28px;
+  }
+
+  input.kid-check:checked::after{
+    font-size: 14px;
+    top: 4px;
+    left: 7px;
+  }
+}
+
