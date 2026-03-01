@@ -3,7 +3,6 @@
 // ======================
 const API_URL = "https://script.google.com/macros/s/AKfycbwVU23KQANt3bynOT3gvutq8Mp-9gm9PV4Q8vprfTVB9tbcdMJt99t1992M2B92VCeQ/exec";
 
-// fichiers de données
 const MAIN_JSON = "data.json";
 const DV_JSON = "data-dv.json";
 
@@ -13,13 +12,11 @@ const DV_JSON = "data-dv.json";
 const tbodyMain = document.getElementById("tbody-main");
 const tbodyDv = document.getElementById("tbody-dv");
 
-if (!tbodyMain) throw new Error("HTML: <tbody id='tbody-main'> introuvable");
-if (!tbodyDv) throw new Error("HTML: <tbody id='tbody-dv'> introuvable");
-
 const statusEl = document.getElementById("status");
 const passwordInput = document.getElementById("passwordInput");
 const unlockBtn = document.getElementById("unlockBtn");
 const authStatus = document.getElementById("authStatus");
+const modeChip = document.getElementById("modeChip"); // badge Lecture / Écriture
 
 // ======================
 // STATE
@@ -31,6 +28,7 @@ let currentPassword = "";
 // UI
 // ======================
 function setStatus(msg, isError = false) {
+  if (!statusEl) return;
   statusEl.textContent = msg;
   statusEl.style.color = isError ? "crimson" : "inherit";
 }
@@ -57,19 +55,25 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  currentPassword = pw; // le serveur accepte sans casse
+  currentPassword = pw;
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
+
+  // ⭐ Badge dynamique
+  if (modeChip) {
+    modeChip.textContent = "Écriture";
+  }
+
   updateCheckboxState();
 });
 
 // ======================
-// FETCH UTIL (avec timestamp)
+// FETCH UTIL (anti-cache)
 // ======================
 async function fetchJson(url) {
   const u = new URL(url);
-  u.searchParams.set("_ts", Date.now().toString()); // anti-cache
+  u.searchParams.set("_ts", Date.now().toString());
 
   const res = await fetch(u.toString(), {
     method: "GET",
@@ -107,7 +111,7 @@ async function apiWriteCell({ id, column, value }) {
 
   u.searchParams.set("action", "write");
   u.searchParams.set("id", id);
-  u.searchParams.set("column", column); // "A" ou "B"
+  u.searchParams.set("column", column);
   u.searchParams.set("value", value ? "true" : "false");
   u.searchParams.set("password", currentPassword);
 
@@ -126,6 +130,10 @@ async function apiWriteCell({ id, column, value }) {
 function createCheckbox({ id, column, checked }) {
   const input = document.createElement("input");
   input.type = "checkbox";
+
+  // ⭐ Style enfants
+  input.className = "kid-check";
+
   input.checked = !!checked;
   input.disabled = !isWriteEnabled;
 
@@ -149,10 +157,11 @@ function createCheckbox({ id, column, checked }) {
 }
 
 // ======================
-// RENDER TABLES
+// RENDER TABLE PRINCIPAL
 // ======================
 function renderTableMain({ tbody, rows, state }) {
-  // 3 colonnes: Livre + A + B
+  if (!tbody) return;
+
   tbody.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
@@ -164,7 +173,7 @@ function renderTableMain({ tbody, rows, state }) {
     tr.appendChild(tdLabel);
 
     const tdA = document.createElement("td");
-    tdA.style.textAlign = "center";
+    tdA.className = "center";
     tdA.appendChild(createCheckbox({
       id: row.id,
       column: "A",
@@ -173,7 +182,7 @@ function renderTableMain({ tbody, rows, state }) {
     tr.appendChild(tdA);
 
     const tdB = document.createElement("td");
-    tdB.style.textAlign = "center";
+    tdB.className = "center";
     tdB.appendChild(createCheckbox({
       id: row.id,
       column: "B",
@@ -187,9 +196,12 @@ function renderTableMain({ tbody, rows, state }) {
   tbody.appendChild(fragment);
 }
 
+// ======================
+// RENDER TABLE DEUX-VOIX
+// ======================
 function renderTableDv({ tbody, rows, state }) {
-  // 2 colonnes: Livre + A (une seule checkbox)
-  // On utilise A ; B n'est jamais écrit (reste false/vide en DB)
+  if (!tbody) return;
+
   tbody.innerHTML = "";
   const fragment = document.createDocumentFragment();
 
@@ -201,10 +213,10 @@ function renderTableDv({ tbody, rows, state }) {
     tr.appendChild(tdLabel);
 
     const tdOne = document.createElement("td");
-    tdOne.style.textAlign = "center";
+    tdOne.className = "center";
     tdOne.appendChild(createCheckbox({
-      id: row.id,        // ex: dv-row-001
-      column: "A",       // ✅ on écrit seulement A
+      id: row.id,
+      column: "A", // une seule colonne utilisée
       checked: state[row.id]?.A
     }));
     tr.appendChild(tdOne);
@@ -222,7 +234,6 @@ async function init() {
   try {
     setStatus("Chargement…");
 
-    // Charger les 2 listes
     const [mainRes, dvRes] = await Promise.all([
       fetch(MAIN_JSON, { cache: "no-store" }),
       fetch(DV_JSON, { cache: "no-store" })
@@ -233,15 +244,17 @@ async function init() {
       dvRes.json()
     ]);
 
-    // Charger l’état (commun aux deux tables grâce aux ids distincts)
     const state = await apiReadState();
 
-    // Render
     renderTableMain({ tbody: tbodyMain, rows: mainRows, state });
     renderTableDv({ tbody: tbodyDv, rows: dvRows, state });
 
-    // Lecture seule par défaut
     updateCheckboxState();
+
+    // Badge initial
+    if (modeChip) {
+      modeChip.textContent = "Lecture";
+    }
 
     setStatus("Prêt.");
   } catch (err) {
@@ -250,5 +263,3 @@ async function init() {
 }
 
 init();
-
-
