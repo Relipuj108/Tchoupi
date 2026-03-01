@@ -1,5 +1,4 @@
-[
-  { "id": "row-001", "label": "Première ligne" },
-  { "id": "row-002", "label": "Deuxième ligne" },
-  { "id": "row-003", "label": "Troisième ligne" }
-]
+{
+  "row-001": { "A": true, "B": false },
+  "row-002": { "A": true, "B": true }
+}
