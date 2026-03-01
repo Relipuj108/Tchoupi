@@ -13,6 +13,9 @@ const DV_JSON = "data-dv.json";
 const tbodyMain = document.getElementById("tbody-main");
 const tbodyDv = document.getElementById("tbody-dv");
 
+if (!tbodyMain) throw new Error("HTML: <tbody id='tbody-main'> introuvable");
+if (!tbodyDv) throw new Error("HTML: <tbody id='tbody-dv'> introuvable");
+
 const statusEl = document.getElementById("status");
 const passwordInput = document.getElementById("passwordInput");
 const unlockBtn = document.getElementById("unlockBtn");
@@ -247,3 +250,4 @@ async function init() {
 }
 
 init();
+
