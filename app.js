@@ -8,12 +8,11 @@ const statusEl = document.getElementById("status");
 
 // ====== UI ======
 function setStatus(msg, isError = false) {
-  if (!statusEl) return;
   statusEl.textContent = msg;
   statusEl.style.color = isError ? "crimson" : "inherit";
 }
 
-// ====== PASSWORD (session) ======
+// ====== PASSWORD ======
 function getPassword() {
   return sessionStorage.getItem(PW_SESSION_KEY) || "";
 }
@@ -36,55 +35,52 @@ function ensurePassword() {
 // ====== API ======
 async function apiReadState() {
   const res = await fetch(`${API_URL}?action=read`, { cache: "no-store" });
-  const json = await res.json().catch(() => null);
-  if (!json || !json.ok) throw new Error(json?.error || "Lecture impossible");
-  return json.data || {}; // { "row-001": {A:true,B:false}, ... }
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch { throw new Error("Réponse non-JSON (read)"); }
+  if (!json.ok) throw new Error(json.error || "Erreur API (read)");
+  return json.data || {};
 }
 
 async function apiWriteCell({ id, column, value }) {
   const password = ensurePassword();
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      action: "write",
-      id,
-      column,     // "A" | "B"
-      value,      // boolean
-      password
-    })
-  });
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "write");
+  url.searchParams.set("id", id);
+  url.searchParams.set("column", column);
+  url.searchParams.set("value", value ? "true" : "false");
+  url.searchParams.set("password", password);
 
-  const json = await res.json().catch(() => null);
+  const res = await fetch(url.toString(), { cache: "no-store" });
 
-  if (!json || !json.ok) {
-    // si mauvais mdp, on le purge pour forcer une nouvelle saisie
-    const err = (json?.error || "Écriture impossible").toString();
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch { throw new Error("Réponse non-JSON (write)"); }
+
+  if (!json.ok) {
+    const err = String(json.error || "Erreur API (write)");
     if (err.toLowerCase().includes("unauthorized")) clearPassword();
     throw new Error(err);
   }
-
   return true;
 }
 
-// ====== CHECKBOX FACTORY ======
+// ====== CHECKBOX ======
 function createCheckbox({ id, column, checked }) {
   const input = document.createElement("input");
   input.type = "checkbox";
   input.checked = !!checked;
-  input.setAttribute("aria-label", `${id}-${column}`);
 
   input.addEventListener("change", async () => {
-    const newValue = input.checked;       // valeur voulue
-    const previousValue = !newValue;      // pour rollback si erreur
+    const newValue = input.checked;
+    const previousValue = !newValue;
 
     try {
       setStatus("Sauvegarde…");
       await apiWriteCell({ id, column, value: newValue });
       setStatus("Enregistré ✅");
     } catch (err) {
-      // rollback visuel
       input.checked = previousValue;
       setStatus(`Erreur: ${err.message}`, true);
     }
@@ -93,23 +89,17 @@ function createCheckbox({ id, column, checked }) {
   return input;
 }
 
-// ====== BOOTSTRAP ======
+// ====== INIT ======
 async function init() {
   try {
     setStatus("Chargement…");
 
-    // 1) Liste statique des lignes
     const listRes = await fetch("data.json", { cache: "no-store" });
     const rows = await listRes.json();
+    if (!Array.isArray(rows)) throw new Error("data.json doit être un tableau []");
 
-    if (!Array.isArray(rows)) {
-      throw new Error("data.json doit être un tableau JSON []");
-    }
-
-    // 2) État depuis Google Sheets
     const state = await apiReadState();
 
-    // 3) Render
     tbody.innerHTML = "";
     const fragment = document.createDocumentFragment();
 
@@ -122,24 +112,12 @@ async function init() {
 
       const tdA = document.createElement("td");
       tdA.style.textAlign = "center";
-      tdA.appendChild(
-        createCheckbox({
-          id: row.id,
-          column: "A",
-          checked: state[row.id]?.A
-        })
-      );
+      tdA.appendChild(createCheckbox({ id: row.id, column: "A", checked: state[row.id]?.A }));
       tr.appendChild(tdA);
 
       const tdB = document.createElement("td");
       tdB.style.textAlign = "center";
-      tdB.appendChild(
-        createCheckbox({
-          id: row.id,
-          column: "B",
-          checked: state[row.id]?.B
-        })
-      );
+      tdB.appendChild(createCheckbox({ id: row.id, column: "B", checked: state[row.id]?.B }));
       tr.appendChild(tdB);
 
       fragment.appendChild(tr);
@@ -153,5 +131,3 @@ async function init() {
 }
 
 init();
-
-
