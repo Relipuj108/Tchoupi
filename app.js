@@ -44,7 +44,13 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  currentPassword = pw;
+  // Vérification insensible à la casse
+  if (pw.toLowerCase() !== "louise") {
+    authStatus.textContent = "Mot de passe incorrect";
+    return;
+  }
+
+  currentPassword = "Louise"; // on envoie toujours la bonne valeur au backend
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
@@ -207,3 +213,4 @@ async function init() {
 }
 
 init();
+
