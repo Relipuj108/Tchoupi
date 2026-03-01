@@ -32,12 +32,46 @@ function ensurePassword() {
   return pw;
 }
 
+// ====== FETCH HELPERS ======
+async function fetchJsonOrExplain(url) {
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "GET",
+      cache: "no-store",
+      redirect: "follow"
+      // mode: "cors" // par défaut; inutile de le fixer
+    });
+  } catch (e) {
+    // Erreur réseau / CORS / redirect bloquée
+    throw new Error(`Failed to fetch (réseau/CORS). URL: ${url}`);
+  }
+
+  const text = await res.text();
+
+  // Si HTTP != 200, on affiche le début de la réponse
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}. Réponse: ${text.slice(0, 140)}`);
+  }
+
+  // Tente JSON
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error(`Réponse non-JSON: ${text.slice(0, 140)}`);
+  }
+
+  return json;
+}
+
 // ====== API ======
 async function apiReadState() {
-  const res = await fetch(`${API_URL}?action=read`, { cache: "no-store" });
-  const text = await res.text();
-  let json;
-  try { json = JSON.parse(text); } catch { throw new Error("Réponse non-JSON (read)"); }
+  const url = new URL(API_URL);
+  url.searchParams.set("action", "read");
+  url.searchParams.set("_ts", String(Date.now())); // anti-cache
+
+  const json = await fetchJsonOrExplain(url.toString());
   if (!json.ok) throw new Error(json.error || "Erreur API (read)");
   return json.data || {};
 }
@@ -48,15 +82,12 @@ async function apiWriteCell({ id, column, value }) {
   const url = new URL(API_URL);
   url.searchParams.set("action", "write");
   url.searchParams.set("id", id);
-  url.searchParams.set("column", column);
+  url.searchParams.set("column", column); // "A" | "B"
   url.searchParams.set("value", value ? "true" : "false");
   url.searchParams.set("password", password);
+  url.searchParams.set("_ts", String(Date.now())); // anti-cache
 
-  const res = await fetch(url.toString(), { cache: "no-store" });
-
-  const text = await res.text();
-  let json;
-  try { json = JSON.parse(text); } catch { throw new Error("Réponse non-JSON (write)"); }
+  const json = await fetchJsonOrExplain(url.toString());
 
   if (!json.ok) {
     const err = String(json.error || "Erreur API (write)");
@@ -83,6 +114,8 @@ function createCheckbox({ id, column, checked }) {
     } catch (err) {
       input.checked = previousValue;
       setStatus(`Erreur: ${err.message}`, true);
+      // utile pour voir l’erreur complète
+      console.error(err);
     }
   });
 
@@ -127,9 +160,8 @@ async function init() {
     setStatus("Prêt.");
   } catch (err) {
     setStatus(`Erreur: ${err.message}`, true);
+    console.error(err);
   }
 }
 
 init();
-
-
