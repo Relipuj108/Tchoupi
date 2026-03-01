@@ -1,7 +1,7 @@
 // ======================
 // CONFIG
 // ======================
-const API_URL = "https://script.google.com/macros/s/AKfycbzAp5c0f0vcv3yqnIPoXlgMvwN3rOpuUW7Y41zpiXT5ZQK9AQluio-eDlppPOiBA_sV/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzUgcTL62VP9R_hYPUxn7c0qIVE613izC33hp3hf_ZHYeKrfigquQtnMaN2pKU1eIC-/exec";
 
 // ======================
 // DOM
@@ -213,4 +213,5 @@ async function init() {
 }
 
 init();
+
 
