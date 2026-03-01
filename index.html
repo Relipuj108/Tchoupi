@@ -9,18 +9,17 @@
 <body>
   <main>
     <h1>Liste T'choupi Louise</h1>
+
+    <div id="auth-section" style="margin-bottom:15px;">
+      <input type="text" id="passwordInput" placeholder="Mot de passe">
+      <button id="unlockBtn">Valider</button>
+      <span id="authStatus">Lecture seule</span>
+    </div>
+
     <div id="status" class="muted"></div>
-<div id="auth-section" style="margin-bottom:15px;">
-  <input type="text" id="passwordInput" placeholder="Mot de passe">
-<button id="unlockBtn">Valider</button>
-<span id="authStatus">Lecture seule</span>
 
-<div id="status"></div>
-
-<table>
-  <tbody id="tbody"></tbody>
-</table>
-</div>
+    <!-- TABLEAU 1 : principal -->
+    <h2>Principal</h2>
     <table>
       <thead>
         <tr>
@@ -29,16 +28,23 @@
           <th>Nouveau à lire/à écouter</th>
         </tr>
       </thead>
-      <tbody id="tbody"></tbody>
+      <tbody id="tbody-main"></tbody>
+    </table>
+
+    <!-- TABLEAU 2 : deux-voix -->
+    <h2>Deux-voix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Livre</th>
+          <th>Ancien</th>
+          <th>Nouveau à lire/à écouter</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-dv"></tbody>
     </table>
   </main>
 
   <script src="app.js"></script>
 </body>
-
 </html>
-
-
-
-
-
