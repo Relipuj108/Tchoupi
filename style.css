@@ -375,3 +375,58 @@ input.kid-check:disabled{
   table{ min-width: 560px; }
   .topbar-inner{ flex-direction: column; align-items:flex-start; }
 }
+
+
+/* =========================
+   MOBILE COMPACT MODE
+   ========================= */
+@media (max-width: 600px){
+
+  table{
+    min-width: 100%;   /* plus de largeur fixe */
+  }
+
+  thead th,
+  tbody td{
+    padding: 8px 6px;  /* moins d’espace */
+  }
+
+  /* colonne titre plus flexible */
+  tbody td:first-child,
+  thead th:first-child{
+    width: auto;
+    max-width: 180px;
+    white-space: normal;   /* autorise retour ligne */
+    word-break: break-word;
+  }
+
+  /* colonnes checkbox plus étroites */
+  td.center,
+  .th-center{
+    width: 70px;
+    min-width: 60px;
+    padding: 6px 4px;
+  }
+
+  /* checkbox légèrement plus petites sur mobile */
+  input.kid-check{
+    width: 32px;
+    height: 32px;
+  }
+
+  input.kid-check:checked::after{
+    font-size: 16px;
+    top: 5px;
+    left: 8px;
+  }
+
+  /* réduire marges générales */
+  .card{
+    padding: 12px;
+  }
+
+  .container{
+    padding: 0 10px;
+  }
+}
+
