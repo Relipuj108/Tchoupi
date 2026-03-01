@@ -1,4 +1,5 @@
 [
   { "id": "row-001", "label": "Ligne 1" },
-  { "id": "row-002", "label": "Ligne 2" }
+  { "id": "row-002", "label": "Ligne 2" },
+  { "id": "row-003", "label": "Ligne 3" }
 ]
