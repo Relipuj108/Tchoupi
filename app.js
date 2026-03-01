@@ -1,7 +1,7 @@
 // ======================
 // CONFIG
 // ======================
-const API_URL = "https://script.google.com/macros/s/AKfycbywXyUDTQzRfmXRcPBT9p0pdO-MVG8KNJzdnivEUGd8vMP6E_yUlzpvvuHMcFhOXWif/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz1I-qr2PeVPNdkwRO6sUDny89OK5xIFjAXASV4-I_nS6WYAI0Yy6YvTxc6FSZEXobX/exec";
 
 // ======================
 // DOM
@@ -44,13 +44,12 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  // Vérification insensible à la casse
   if (pw.toLowerCase() !== "louise") {
     authStatus.textContent = "Mot de passe incorrect";
     return;
   }
 
-  currentPassword = "Louise"; // on envoie toujours la bonne valeur au backend
+  currentPassword = pw; // garde la version tapée
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
@@ -60,20 +59,15 @@ unlockBtn.addEventListener("click", () => {
 // ======================
 // FETCH UTIL
 // ======================
-async function fetchJsonDebug(url) {
+async function fetchJson(url) {
   const u = new URL(url);
-  u.searchParams.set("_ts", Date.now().toString()); // anti-cache
+  u.searchParams.set("_ts", Date.now().toString());
 
-  let res;
-  try {
-    res = await fetch(u.toString(), {
-      method: "GET",
-      cache: "no-store",
-      redirect: "follow"
-    });
-  } catch (e) {
-    throw new Error("Failed to fetch : " + u.toString());
-  }
+  const res = await fetch(u.toString(), {
+    method: "GET",
+    cache: "no-store",
+    redirect: "follow"
+  });
 
   const text = await res.text();
 
@@ -81,11 +75,11 @@ async function fetchJsonDebug(url) {
   try {
     json = JSON.parse(text);
   } catch {
-    throw new Error("Réponse non JSON : " + text.slice(0, 150));
+    throw new Error("Réponse non JSON");
   }
 
   if (!res.ok) {
-    throw new Error("HTTP " + res.status + " : " + text.slice(0, 150));
+    throw new Error("HTTP " + res.status);
   }
 
   return json;
@@ -95,27 +89,24 @@ async function fetchJsonDebug(url) {
 // API
 // ======================
 async function apiReadState() {
-  const url = `${API_URL}?action=read`;
-  const json = await fetchJsonDebug(url);
-
-  if (!json.ok) throw new Error(json.error || "Erreur API read");
-
+  const json = await fetchJson(`${API_URL}?action=read`);
+  if (!json.ok) throw new Error(json.error || "Erreur read");
   return json.data || {};
 }
 
 async function apiWriteCell({ id, column, value }) {
-  const url = new URL(API_URL);
+  const u = new URL(API_URL);
 
-  url.searchParams.set("action", "write");
-  url.searchParams.set("id", id);
-  url.searchParams.set("column", column);
-  url.searchParams.set("value", value ? "true" : "false");
-  url.searchParams.set("password", currentPassword);
+  u.searchParams.set("action", "write");
+  u.searchParams.set("id", id);
+  u.searchParams.set("column", column);
+  u.searchParams.set("value", value ? "true" : "false");
+  u.searchParams.set("password", currentPassword);
 
-  const json = await fetchJsonDebug(url.toString());
+  const json = await fetchJson(u.toString());
 
   if (!json.ok) {
-    throw new Error(json.error || "Erreur API write");
+    throw new Error(json.error || "Erreur write");
   }
 
   return true;
@@ -131,7 +122,6 @@ function createCheckbox({ id, column, checked }) {
   input.disabled = !isWriteEnabled;
 
   input.addEventListener("change", async () => {
-
     if (!isWriteEnabled) return;
 
     const newValue = input.checked;
@@ -144,7 +134,6 @@ function createCheckbox({ id, column, checked }) {
     } catch (err) {
       input.checked = previousValue;
       setStatus("Erreur : " + err.message, true);
-      console.error(err);
     }
   });
 
@@ -158,15 +147,9 @@ async function init() {
   try {
     setStatus("Chargement…");
 
-    // 1️⃣ Charger la liste
     const listRes = await fetch("data.json", { cache: "no-store" });
     const rows = await listRes.json();
 
-    if (!Array.isArray(rows)) {
-      throw new Error("data.json doit être un tableau []");
-    }
-
-    // 2️⃣ Charger état depuis Google Sheets
     const state = await apiReadState();
 
     tbody.innerHTML = "";
@@ -176,7 +159,7 @@ async function init() {
       const tr = document.createElement("tr");
 
       const tdLabel = document.createElement("td");
-      tdLabel.textContent = row.label || row.id;
+      tdLabel.textContent = row.label;
       tr.appendChild(tdLabel);
 
       const tdA = document.createElement("td");
@@ -201,18 +184,12 @@ async function init() {
     }
 
     tbody.appendChild(fragment);
-
     updateCheckboxState();
 
     setStatus("Prêt.");
-
   } catch (err) {
     setStatus("Erreur : " + err.message, true);
-    console.error(err);
   }
 }
 
 init();
-
-
-
