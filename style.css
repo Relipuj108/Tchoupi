@@ -1,33 +1,30 @@
 :root{
-  /* couleurs marquées */
-  --blue: #0b5ed7;      /* bleu fort */
-  --blue2: #1e88ff;     /* bleu clair vif */
-  --green: #16a34a;     /* vert fort */
-  --green2: #22c55e;    /* vert vif */
-  --yellow: #facc15;    /* jaune marqué */
+  /* couleurs marquées (inchangé) */
+  --blue: #0b5ed7;
+  --blue2: #1e88ff;
+  --green: #16a34a;
+  --green2: #22c55e;
+  --yellow: #facc15;
   --orange: #f59e0b;
 
   --ink: #10203a;
   --muted: #415a77;
 
-  --bg: #0b5ed710; /* léger voile bleu (transparence) */
   --card: #ffffff;
-
-  --border: rgba(16,32,58,0.15);
-  --shadow: 0 10px 24px rgba(16,32,58,0.16);
-  --shadow2: 0 6px 16px rgba(16,32,58,0.16);
+  --border: rgba(16,32,58,0.14);
+  --shadow: 0 10px 22px rgba(16,32,58,0.16);
+  --shadow2: 0 6px 14px rgba(16,32,58,0.16);
 
   --radius: 18px;
 }
 
-*{ box-sizing: border-box; }
-html, body { height:100%; }
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
 body{
-  margin: 0;
+  margin:0;
   font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--ink);
 
-  /* fond coloré mais pas pâle */
   background:
     radial-gradient(circle at 12% 10%, rgba(30,136,255,0.35), transparent 40%),
     radial-gradient(circle at 90% 18%, rgba(34,197,94,0.35), transparent 40%),
@@ -35,14 +32,51 @@ body{
     #f3f6ff;
 }
 
+/* =========================
+   LAYOUT (plus compact)
+   ========================= */
 .container{
   max-width: 980px;
-  margin: 22px auto 60px;
-  padding: 0 16px;
+  margin: 16px auto 44px;
+  padding: 0 14px;
+}
+
+.card{
+  background: var(--card);
+  border: 2px solid rgba(16,32,58,0.10);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: 12px;            /* plus compact */
+  margin-top: 12px;         /* plus compact */
+}
+
+.card-table{
+  padding: 10px;            /* encore un peu plus compact pour les tableaux */
+}
+
+.card-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 10px;
+  margin-bottom: 8px;       /* plus compact */
+}
+
+.h1{
+  margin:0;
+  font-size: 18px;          /* plus compact */
+  font-weight: 1000;
+}
+
+.muted{
+  color: var(--muted);
+  font-size: 12.5px;        /* plus compact */
+  font-weight: 750;
+  margin-top: 2px;
 }
 
 /* =========================
-   TOPBAR
+   TOPBAR (compact)
    ========================= */
 .topbar{
   position: sticky;
@@ -56,139 +90,108 @@ body{
 .topbar-inner{
   max-width: 980px;
   margin: 0 auto;
-  padding: 12px 16px;
+  padding: 10px 14px;       /* plus compact */
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap: 12px;
+  gap: 10px;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .badge{
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 14px;
   display:grid;
   place-items:center;
   font-weight: 1000;
-  color: #fff;
+  color:#fff;
   background: linear-gradient(135deg, var(--blue), var(--blue2));
   box-shadow: var(--shadow2);
 }
 
 .brand-title{
-  font-size: 18px;
+  font-size: 15.5px;        /* plus compact */
   font-weight: 1000;
   letter-spacing: 0.2px;
 }
 .brand-sub{
-  font-size: 13px;
+  font-size: 11.5px;        /* plus compact */
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 750;
 }
 
 .topbar-right{
   display:flex;
   align-items:center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .chip{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 6px 10px;        /* compact */
   border-radius: 999px;
   border: 2px solid rgba(16,32,58,0.12);
   background: #fff;
-  box-shadow: 0 6px 14px rgba(16,32,58,0.10);
-  font-size: 13px;
+  box-shadow: 0 6px 12px rgba(16,32,58,0.10);
+  font-size: 12px;
   color: var(--muted);
-  font-weight: 800;
+  font-weight: 850;
 }
 .chip-dot{
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
   background: var(--yellow);
   box-shadow: 0 0 0 4px rgba(250,204,21,0.35);
 }
 
-/* icon tchoupi */
 .tchoupi-icon{
-  height: 60px;
-  width: 40px;
+  height: 52px;             /* un peu plus compact */
+  width: 36px;
   object-fit: contain;
   border-radius: 12px;
   border: 2px solid rgba(16,32,58,0.10);
-  box-shadow: 0 10px 18px rgba(16,32,58,0.18);
-  transition: transform 0.2s ease;
-}
-.tchoupi-icon:hover{
-  transform: rotate(-3deg) scale(1.06);
+  box-shadow: 0 10px 16px rgba(16,32,58,0.18);
 }
 
 /* =========================
-   CARDS
+   AUTH (compact)
    ========================= */
-.card{
-  background: var(--card);
-  border: 2px solid rgba(16,32,58,0.10);
-  box-shadow: var(--shadow);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-top: 18px;
-}
-
-.card-header{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.h1{
-  margin: 0;
-  font-size: 22px;
-  font-weight: 1000;
-}
-.muted{
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 700;
-}
-
 .auth-row{
   display:flex;
   flex-wrap:wrap;
   align-items:flex-end;
-  gap: 12px;
+  gap: 10px;
 }
+
+.auth-field{ min-width: 160px; }
 
 .label{
   display:block;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   font-weight: 900;
 }
 
 .input{
-  width: 220px;
+  width: 200px;
   max-width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;        /* compact */
   border-radius: 14px;
   border: 2px solid rgba(16,32,58,0.18);
   background: #fff;
   outline: none;
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 850;
 }
 .input:focus{
   border-color: rgba(30,136,255,0.85);
@@ -196,284 +199,226 @@ body{
 }
 
 .btn{
-  border: none;
-  cursor: pointer;
-  padding: 10px 14px;
+  border:none;
+  cursor:pointer;
+  padding: 8px 12px;        /* compact */
   border-radius: 14px;
   font-weight: 1000;
-  color: #fff;
+  color:#fff;
   background: linear-gradient(135deg, var(--blue), var(--blue2));
-  box-shadow: 0 10px 20px rgba(30,136,255,0.25);
+  box-shadow: 0 10px 18px rgba(30,136,255,0.22);
   transition: transform 0.12s ease, filter 0.12s ease;
 }
 .btn:hover{ transform: translateY(-1px); filter: brightness(1.05); }
-.btn:active{ transform: translateY(0px); filter: brightness(0.98); }
+.btn:active{ transform: translateY(0); filter: brightness(0.98); }
 
 .authStatus{
   font-weight: 1000;
-  padding: 8px 12px;
+  padding: 6px 10px;        /* compact */
   border-radius: 999px;
   border: 2px dashed rgba(16,32,58,0.22);
   background: rgba(250,204,21,0.28);
   color: rgba(16,32,58,0.92);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .statusbar{
-  margin-top: 12px;
-  padding: 10px 12px;
+  margin-top: 10px;
+  padding: 8px 10px;        /* compact */
   border-radius: 14px;
   background: rgba(34,197,94,0.18);
   border: 2px solid rgba(34,197,94,0.30);
   color: rgba(16,32,58,0.95);
   font-weight: 900;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* =========================
-   SECTION TITLES
+   SECTION TITLES (compact)
    ========================= */
 .section-title{
   display:flex;
   align-items:center;
-  justify-content:space-between;
   gap: 10px;
-  margin-top: 18px;
-  margin-bottom: 10px;
+  margin-top: 12px;
+  margin-bottom: 8px;
 }
 
 .pill{
   display:inline-flex;
   align-items:center;
   gap: 8px;
-  padding: 9px 12px;
+  padding: 6px 10px;        /* compact */
   border-radius: 999px;
   border: 2px solid rgba(16,32,58,0.12);
   background: #fff;
   font-weight: 1000;
-  font-size: 13px;
+  font-size: 12px;
   color: rgba(16,32,58,0.88);
-  box-shadow: 0 8px 14px rgba(16,32,58,0.10);
+  box-shadow: 0 8px 12px rgba(16,32,58,0.10);
 }
 .pill-main{ border-color: rgba(30,136,255,0.35); }
 .pill-dv{ border-color: rgba(34,197,94,0.35); }
 
 /* =========================
-   TABLES
+   TABLES (DENSE)
    ========================= */
 .table-wrap{
-  overflow: auto;
-  border-radius: 16px;
+  overflow: hidden;         /* pas de scroll horizontal par défaut */
+  border-radius: 14px;
   border: 2px solid rgba(16,32,58,0.10);
 }
 
-table{
+.tch-table{
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  min-width: 640px;
+  table-layout: fixed;      /* clé pour les colonnes fixes */
   background: #fff;
 }
 
-thead th{
+.tch-table thead th{
   position: sticky;
   top: 0;
   z-index: 2;
-  text-align: left;
-  font-size: 13px;
+  text-align:left;
+  font-size: 11px;          /* demandé */
   font-weight: 1000;
   color: rgba(16,32,58,0.95);
-  padding: 12px 12px;
+  padding: 6px 6px;         /* compact */
   background: linear-gradient(90deg, rgba(30,136,255,0.30), rgba(34,197,94,0.22));
   border-bottom: 2px solid rgba(16,32,58,0.10);
 }
 
-.th-center{ text-align:center; }
-
-tbody td{
-  padding: 12px 12px;
+.tch-table tbody td{
+  font-size: 11px;          /* demandé */
+  padding: 6px 6px;         /* compact */
   border-bottom: 1px solid rgba(16,32,58,0.10);
-  font-size: 14px;
   font-weight: 750;
+  line-height: 1.15;        /* compact */
 }
 
-/* zebra + hover marqués */
-tbody tr:nth-child(odd) td{
+/* zebra + hover (conservé) */
+.tch-table tbody tr:nth-child(odd) td{
   background: rgba(30,136,255,0.08);
 }
-tbody tr:hover td{
+.tch-table tbody tr:hover td{
   background: rgba(250,204,21,0.20);
 }
 
+.th-center{ text-align:center; }
+
+/* Colonnes: titre flexible (desktop), check compact */
+.col-title{ width: auto; }
+.col-check{ width: 70px; }  /* desktop: compact mais lisible */
+
 td.center{
   text-align:center;
-  width: 120px;
 }
 
 /* =========================
-   GOMMETTE CHECKBOX (marquée)
+   CHECKBOX (compact, marqué)
    ========================= */
 input.kid-check{
   appearance: none;
   -webkit-appearance: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  border: 3px solid rgba(255,255,255,0.95);
+  width: 24px;              /* compact */
+  height: 24px;
+  border-radius: 9px;
+  border: 2px solid rgba(255,255,255,0.95);
 
-  /* bleu marqué = non coché */
   background: linear-gradient(145deg, #1e88ff, #0b5ed7);
   box-shadow:
-    0 6px 0 rgba(9,70,160,1),
-    0 10px 20px rgba(16,32,58,0.25);
+    0 3px 0 rgba(9,70,160,1),
+    0 6px 12px rgba(16,32,58,0.22);
 
   cursor: pointer;
   position: relative;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  transition: transform 0.10s ease, box-shadow 0.10s ease, filter 0.10s ease;
 }
 
 input.kid-check:hover{
-  transform: translateY(-2px) scale(1.04);
+  transform: translateY(-1px) scale(1.02);
   filter: saturate(1.08);
 }
 
 input.kid-check:active{
-  transform: translateY(1px) scale(0.99);
+  transform: translateY(0) scale(0.99);
   box-shadow:
-    0 3px 0 rgba(9,70,160,1),
-    0 6px 14px rgba(16,32,58,0.25);
+    0 2px 0 rgba(9,70,160,1),
+    0 4px 10px rgba(16,32,58,0.20);
 }
 
-/* vert marqué = coché */
 input.kid-check:checked{
   background: linear-gradient(145deg, #22c55e, #16a34a);
   box-shadow:
-    0 6px 0 rgba(11,120,54,1),
-    0 10px 20px rgba(16,32,58,0.25);
+    0 3px 0 rgba(11,120,54,1),
+    0 6px 12px rgba(16,32,58,0.22);
 }
 
 input.kid-check:checked::after{
   content: "★";
   position: absolute;
-  font-size: 20px;
+  font-size: 12px;
   color: rgba(255,255,255,0.98);
-  top: 6px;
-  left: 11px;
+  top: 4px;
+  left: 6px;
   text-shadow: 0 2px 0 rgba(16,32,58,0.25);
 }
 
-/* lecture seule */
 input.kid-check:disabled{
-  cursor: not-allowed;
+  cursor:not-allowed;
   opacity: 0.45;
   filter: grayscale(0.35);
   box-shadow: none;
 }
 
-/* mobile */
-@media (max-width: 720px){
-  table{ min-width: 560px; }
-  .topbar-inner{ flex-direction: column; align-items:flex-start; }
-}
-
-
 /* =========================
-   MOBILE COMPACT MODE
+   MOBILE: colonnes fixes 150 / 40 / 40
+   + titres sur 2 lignes
    ========================= */
 @media (max-width: 600px){
+  .container{ padding: 0 10px; }
 
-  table{
-    min-width: 100%;   /* plus de largeur fixe */
-  }
-
-  thead th,
-  tbody td{
-    padding: 8px 6px;  /* moins d’espace */
-  }
-
-  /* colonne titre plus flexible */
-  tbody td:first-child,
-  thead th:first-child{
-    width: auto;
-    max-width: 180px;
-    white-space: normal;   /* autorise retour ligne */
+  /* 150px pour titre, 40px pour cases */
+  .tch-table thead th.col-title,
+  .tch-table tbody td:first-child{
+    width: 150px !important;
+    max-width: 150px !important;
+    white-space: normal;
     word-break: break-word;
   }
 
-  /* colonnes checkbox plus étroites */
-  td.center,
-  .th-center{
-    width: 70px;
-    min-width: 60px;
-    padding: 6px 4px;
+  /* principal: 2 colonnes checkbox */
+  .tch-table thead th.col-check,
+  .tch-table tbody td.center{
+    width: 40px !important;
+    max-width: 40px !important;
+    padding: 4px 2px;       /* très compact */
   }
 
-  /* checkbox légèrement plus petites sur mobile */
-  input.kid-check{
-    width: 32px;
-    height: 32px;
+  /* Deux-voix: 1 colonne checkbox */
+  .dv-table thead th.col-check{
+    width: 40px !important;
   }
 
-  input.kid-check:checked::after{
-    font-size: 16px;
-    top: 5px;
-    left: 8px;
-  }
-
-  /* réduire marges générales */
-  .card{
-    padding: 12px;
-  }
-
-  .container{
-    padding: 0 10px;
-  }
-}
-
-/* =========================
-   MOBILE FORCED WIDTH
-   ========================= */
-@media (max-width: 600px){
-
-  table{
-    table-layout: fixed;   /* OBLIGATOIRE pour forcer largeur */
-    width: 100%;
-  }
-
-  /* Colonne titre */
-  thead th:first-child,
-  tbody td:first-child{
-    width: 150px;
-    max-width: 150px;
-    white-space: normal;
-    word-wrap: break-word;
-  }
-
-  /* Colonnes checkbox */
-  .th-center,
-  td.center{
-    width: 40px;
-    min-width: 40px;
-    max-width: 40px;
-    padding: 4px 2px;   /* réduire espace */
-  }
-
-  /* réduire padding général */
-  thead th,
-  tbody td{
-    padding: 6px 4px;
-  }
+  /* padding encore plus petit sur mobile */
+  .tch-table thead th{ padding: 6px 5px; }
+  .tch-table tbody td{ padding: 6px 5px; }
 
   /* checkbox un peu plus petite */
   input.kid-check{
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
   }
-
   input.kid-check:checked::after{
-    font-size: 14px;
+    font-size: 11px;
     top: 4px;
-    left: 7px;
+    left: 6px;
   }
-}
 
+  /* topbar compact */
+  .tchoupi-icon{ height: 48px; width: 34px; }
+  .chip{ padding: 6px 8px; }
+}
