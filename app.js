@@ -3,12 +3,17 @@
 // ======================
 const API_URL = "https://script.google.com/macros/s/AKfycbz1I-qr2PeVPNdkwRO6sUDny89OK5xIFjAXASV4-I_nS6WYAI0Yy6YvTxc6FSZEXobX/exec";
 
+// fichiers de données
+const MAIN_JSON = "data.json";
+const DV_JSON = "data-dv.json";
+
 // ======================
 // DOM
 // ======================
-const tbody = document.getElementById("tbody");
-const statusEl = document.getElementById("status");
+const tbodyMain = document.getElementById("tbody-main");
+const tbodyDv = document.getElementById("tbody-dv");
 
+const statusEl = document.getElementById("status");
 const passwordInput = document.getElementById("passwordInput");
 const unlockBtn = document.getElementById("unlockBtn");
 const authStatus = document.getElementById("authStatus");
@@ -49,7 +54,7 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  currentPassword = pw;
+  currentPassword = pw; // le serveur accepte sans casse
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
@@ -61,9 +66,7 @@ unlockBtn.addEventListener("click", () => {
 // ======================
 async function fetchJson(url) {
   const u = new URL(url);
-
-  // 🔥 Anti-cache (Safari/iPhone)
-  u.searchParams.set("_ts", Date.now().toString());
+  u.searchParams.set("_ts", Date.now().toString()); // anti-cache
 
   const res = await fetch(u.toString(), {
     method: "GET",
@@ -101,7 +104,7 @@ async function apiWriteCell({ id, column, value }) {
 
   u.searchParams.set("action", "write");
   u.searchParams.set("id", id);
-  u.searchParams.set("column", column);
+  u.searchParams.set("column", column); // "A" ou "B"
   u.searchParams.set("value", value ? "true" : "false");
   u.searchParams.set("password", currentPassword);
 
@@ -143,53 +146,101 @@ function createCheckbox({ id, column, checked }) {
 }
 
 // ======================
+// RENDER TABLES
+// ======================
+function renderTableMain({ tbody, rows, state }) {
+  // 3 colonnes: Livre + A + B
+  tbody.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = row.label;
+    tr.appendChild(tdLabel);
+
+    const tdA = document.createElement("td");
+    tdA.style.textAlign = "center";
+    tdA.appendChild(createCheckbox({
+      id: row.id,
+      column: "A",
+      checked: state[row.id]?.A
+    }));
+    tr.appendChild(tdA);
+
+    const tdB = document.createElement("td");
+    tdB.style.textAlign = "center";
+    tdB.appendChild(createCheckbox({
+      id: row.id,
+      column: "B",
+      checked: state[row.id]?.B
+    }));
+    tr.appendChild(tdB);
+
+    fragment.appendChild(tr);
+  }
+
+  tbody.appendChild(fragment);
+}
+
+function renderTableDv({ tbody, rows, state }) {
+  // 2 colonnes: Livre + A (une seule checkbox)
+  // On utilise A ; B n'est jamais écrit (reste false/vide en DB)
+  tbody.innerHTML = "";
+  const fragment = document.createDocumentFragment();
+
+  for (const row of rows) {
+    const tr = document.createElement("tr");
+
+    const tdLabel = document.createElement("td");
+    tdLabel.textContent = row.label;
+    tr.appendChild(tdLabel);
+
+    const tdOne = document.createElement("td");
+    tdOne.style.textAlign = "center";
+    tdOne.appendChild(createCheckbox({
+      id: row.id,        // ex: dv-row-001
+      column: "A",       // ✅ on écrit seulement A
+      checked: state[row.id]?.A
+    }));
+    tr.appendChild(tdOne);
+
+    fragment.appendChild(tr);
+  }
+
+  tbody.appendChild(fragment);
+}
+
+// ======================
 // INIT
 // ======================
 async function init() {
   try {
     setStatus("Chargement…");
 
-    const listRes = await fetch("data.json", { cache: "no-store" });
-    const rows = await listRes.json();
+    // Charger les 2 listes
+    const [mainRes, dvRes] = await Promise.all([
+      fetch(MAIN_JSON, { cache: "no-store" }),
+      fetch(DV_JSON, { cache: "no-store" })
+    ]);
 
+    const [mainRows, dvRows] = await Promise.all([
+      mainRes.json(),
+      dvRes.json()
+    ]);
+
+    // Charger l’état (commun aux deux tables grâce aux ids distincts)
     const state = await apiReadState();
 
-    tbody.innerHTML = "";
-    const fragment = document.createDocumentFragment();
+    // Render
+    renderTableMain({ tbody: tbodyMain, rows: mainRows, state });
+    renderTableDv({ tbody: tbodyDv, rows: dvRows, state });
 
-    for (const row of rows) {
-      const tr = document.createElement("tr");
-
-      const tdLabel = document.createElement("td");
-      tdLabel.textContent = row.label;
-      tr.appendChild(tdLabel);
-
-      const tdA = document.createElement("td");
-      tdA.style.textAlign = "center";
-      tdA.appendChild(createCheckbox({
-        id: row.id,
-        column: "A",
-        checked: state[row.id]?.A
-      }));
-      tr.appendChild(tdA);
-
-      const tdB = document.createElement("td");
-      tdB.style.textAlign = "center";
-      tdB.appendChild(createCheckbox({
-        id: row.id,
-        column: "B",
-        checked: state[row.id]?.B
-      }));
-      tr.appendChild(tdB);
-
-      fragment.appendChild(tr);
-    }
-
-    tbody.appendChild(fragment);
+    // Lecture seule par défaut
     updateCheckboxState();
 
     setStatus("Prêt.");
-
   } catch (err) {
     setStatus("Erreur : " + err.message, true);
   }
