@@ -3,45 +3,78 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tchoupi</title>
+  <title>Liste T'choupi Louise</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main>
-    <h1>Liste T'choupi Louise</h1>
-
-    <div id="auth-section" style="margin-bottom:15px;">
-      <input type="text" id="passwordInput" placeholder="Mot de passe">
-      <button id="unlockBtn">Valider</button>
-      <span id="authStatus">Lecture seule</span>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="badge">T</div>
+        <div>
+          <div class="brand-title">Liste T'choupi Louise</div>
+          <div class="brand-sub">Suivi des livres • Ancien / Nouveau • Deux-voix</div>
+        </div>
+      </div>
+      <div class="chip"><span class="chip-dot"></span> Mode: <b id="modeChip">Lecture</b></div>
     </div>
+  </header>
 
-    <div id="status" class="muted"></div>
+  <main class="container">
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h1 class="h1">🌈 Suivi de lecture</h1>
+          <div class="muted">Lecture libre. Pour cocher, entre le mot de passe puis valide.</div>
+        </div>
+      </div>
 
-    <!-- TABLEAU 1 : principal -->
-    <h2>Principal</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Livre</th>
-          <th>Ancien</th>
-          <th>Nouveau à lire/à écouter</th>
-        </tr>
-      </thead>
-      <tbody id="tbody-main"></tbody>
-    </table>
+      <div class="auth-row">
+        <div>
+          <label class="label" for="passwordInput">Mot de passe</label>
+          <input type="text" id="passwordInput" class="input" placeholder="Louise" />
+        </div>
+        <button id="unlockBtn" class="btn">Valider</button>
+        <span id="authStatus" class="authStatus">Lecture seule</span>
+      </div>
 
-    <!-- TABLEAU 2 : deux-voix (1 seule colonne checkbox) -->
-    <h2>Deux-voix</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Livre</th>
-          <th>Deux-voix</th>
-        </tr>
-      </thead>
-      <tbody id="tbody-dv"></tbody>
-    </table>
+      <div id="status" class="statusbar" style="margin-top:12px;">Prêt.</div>
+    </section>
+
+    <div class="section-title">
+      <div class="pill"><span class="emoji">📗</span> Principal</div>
+    </div>
+    <section class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Livre</th>
+              <th style="text-align:center;">Ancien</th>
+              <th style="text-align:center;">Nouveau</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-main"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <div class="pill"><span class="emoji">🎧</span> Deux-voix</div>
+    </div>
+    <section class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Livre</th>
+              <th style="text-align:center;">Deux-voix</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-dv"></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
   <script src="app.js"></script>
