@@ -1,5 +1,5 @@
 // ====== CONFIG ======
-const API_URL = "https://script.google.com/macros/s/AKfycbxBRIgHFpwEMgRDn6gIEu4Zot8yEUb-7xsnThmFuprOfvnHPhI3tNKmqoUvw_TNRDbP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxwM_jr9YWSJeiLibhH0U_1EDFxitguJmFTbLJVFof1T9TYyEojaDa-GaLCJPOr96dz/exec";
 const PW_SESSION_KEY = "gs-write-password";
 
 // ====== DOM ======
@@ -153,4 +153,5 @@ async function init() {
 }
 
 init();
+
 
