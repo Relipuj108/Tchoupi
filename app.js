@@ -1,5 +1,5 @@
 // ====== CONFIG ======
-const API_URL = "COLLE_ICI_TON_URL_APPS_SCRIPT"; // ex: https://script.google.com/macros/s/XXXX/exec
+const API_URL = "https://script.google.com/macros/s/AKfycbxBRIgHFpwEMgRDn6gIEu4Zot8yEUb-7xsnThmFuprOfvnHPhI3tNKmqoUvw_TNRDbP/exec";
 const PW_SESSION_KEY = "gs-write-password";
 
 // ====== DOM ======
@@ -153,3 +153,4 @@ async function init() {
 }
 
 init();
+
