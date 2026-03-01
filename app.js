@@ -49,7 +49,7 @@ unlockBtn.addEventListener("click", () => {
     return;
   }
 
-  currentPassword = pw; // garde la version tapée
+  currentPassword = pw;
   isWriteEnabled = true;
 
   authStatus.textContent = "Écriture activée";
@@ -57,10 +57,12 @@ unlockBtn.addEventListener("click", () => {
 });
 
 // ======================
-// FETCH UTIL
+// FETCH UTIL (avec timestamp)
 // ======================
 async function fetchJson(url) {
   const u = new URL(url);
+
+  // 🔥 Anti-cache (Safari/iPhone)
   u.searchParams.set("_ts", Date.now().toString());
 
   const res = await fetch(u.toString(), {
@@ -187,6 +189,7 @@ async function init() {
     updateCheckboxState();
 
     setStatus("Prêt.");
+
   } catch (err) {
     setStatus("Erreur : " + err.message, true);
   }
