@@ -1,7 +1,7 @@
 // ======================
 // CONFIG
 // ======================
-const API_URL = "https://script.google.com/macros/s/AKfycbz1I-qr2PeVPNdkwRO6sUDny89OK5xIFjAXASV4-I_nS6WYAI0Yy6YvTxc6FSZEXobX/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwVU23KQANt3bynOT3gvutq8Mp-9gm9PV4Q8vprfTVB9tbcdMJt99t1992M2B92VCeQ/exec";
 
 // fichiers de données
 const MAIN_JSON = "data.json";
@@ -250,4 +250,5 @@ async function init() {
 }
 
 init();
+
 
