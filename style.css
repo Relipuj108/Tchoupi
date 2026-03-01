@@ -8,5 +8,6 @@ th { text-align: left; background: #f6f6f6; }
 
 label { cursor: pointer; }
 
-td:nth-child(2), td:nth-child(3) { text-align: center; }
-td:nth-child(2) label, td:nth-child(3) label { justify-content: center; }
+td:nth-child(2), td:nth-child(3) { text-align: center; width: 70px; }
+td:nth-child(2) input, td:nth-child(3) input { transform: scale(1.2); }
+
