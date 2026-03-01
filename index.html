@@ -40,9 +40,9 @@
       </div>
 
       <div class="auth-row">
-        <div>
+        <div class="auth-field">
           <label class="label" for="passwordInput">Mot de passe</label>
-          <input type="text" id="passwordInput" class="input" placeholder="Mot de passe" />
+          <input type="text" id="passwordInput" class="input" placeholder="Louise" />
         </div>
 
         <button id="unlockBtn" class="btn">Valider</button>
@@ -56,14 +56,14 @@
       <div class="pill pill-main">📗 Principal</div>
     </div>
 
-    <section class="card">
+    <section class="card card-table">
       <div class="table-wrap">
-        <table>
+        <table class="tch-table">
           <thead>
             <tr>
-              <th>Livre</th>
-              <th class="th-center">Ancien</th>
-              <th class="th-center">Nouveau</th>
+              <th class="col-title">Livre</th>
+              <th class="th-center col-check">Ancien</th>
+              <th class="th-center col-check">Nouveau</th>
             </tr>
           </thead>
           <tbody id="tbody-main"></tbody>
@@ -75,13 +75,13 @@
       <div class="pill pill-dv">🎧 Deux-voix</div>
     </div>
 
-    <section class="card">
+    <section class="card card-table">
       <div class="table-wrap">
-        <table class="dv-table">
+        <table class="tch-table dv-table">
           <thead>
             <tr>
-              <th>Livre</th>
-              <th class="th-center">Deux-voix</th>
+              <th class="col-title">Livre</th>
+              <th class="th-center col-check">Deux-voix</th>
             </tr>
           </thead>
           <tbody id="tbody-dv"></tbody>
