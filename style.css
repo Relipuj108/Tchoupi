@@ -5,4 +5,8 @@ th, td { border: 1px solid #ddd; padding: 10px; }
 th { text-align: left; background: #f6f6f6; }
 #status { margin: 12px 0; font-size: 14px; }
 .muted { opacity: .8; }
+
 label { cursor: pointer; }
+
+td:nth-child(2), td:nth-child(3) { text-align: center; }
+td:nth-child(2) label, td:nth-child(3) label { justify-content: center; }
