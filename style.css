@@ -423,27 +423,27 @@ input.kid-check:disabled{
   .chip{ padding: 6px 8px; }
 }
 /* =========================
-   ICON IN TABLE HEADER
+   HEADER ICON UNDER TEXT
    ========================= */
 
-.th-with-icon .th-label{
+.th-with-icon .th-stack{
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .th-icon{
   width: 30px;
   height: 30px;
   object-fit: contain;
-  border-radius: 6px;
 }
 
-/* version mobile légèrement plus petite */
+/* mobile : plus petite pour rester dans 40px */
 @media (max-width: 600px){
   .th-icon{
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
   }
 }
