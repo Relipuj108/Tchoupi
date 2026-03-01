@@ -80,5 +80,24 @@
   { "id": "row-079", "label": "79 - T’choupi fait un tour en bateau" },
   { "id": "row-080", "label": "80 - T’choupi visite un château" },
   { "id": "row-081", "label": "81 - T’choupi découvre la musique" },
-  { "id": "row-082", "label": "82 - T’choupi découvre les émotions" }
+  { "id": "row-082", "label": "82 - T’choupi découvre les émotions" },
+
+  { "id": "row-083", "label": "83 - À compléter" },
+  { "id": "row-084", "label": "84 - À compléter" },
+  { "id": "row-085", "label": "85 - À compléter" },
+  { "id": "row-086", "label": "86 - À compléter" },
+  { "id": "row-087", "label": "87 - À compléter" },
+  { "id": "row-088", "label": "88 - À compléter" },
+  { "id": "row-089", "label": "89 - À compléter" },
+  { "id": "row-090", "label": "90 - À compléter" },
+  { "id": "row-091", "label": "91 - À compléter" },
+  { "id": "row-092", "label": "92 - À compléter" },
+  { "id": "row-093", "label": "93 - À compléter" },
+  { "id": "row-094", "label": "94 - À compléter" },
+  { "id": "row-095", "label": "95 - À compléter" },
+  { "id": "row-096", "label": "96 - À compléter" },
+  { "id": "row-097", "label": "97 - À compléter" },
+  { "id": "row-098", "label": "98 - À compléter" },
+  { "id": "row-099", "label": "99 - À compléter" },
+  { "id": "row-100", "label": "100 - À compléter" }
 ]
